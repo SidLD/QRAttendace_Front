@@ -5,6 +5,7 @@ import { Login } from "../pages/login/index.jsx"
 import { Register } from "../pages/register/index.jsx"
 import { Record } from "../pages/record/index.jsx"
 import { Logout } from "../pages/logout/index.jsx"
+import { AttendanceSetting } from "../pages/attendanceSetting/index.jsx"
 const routers = createBrowserRouter(
     createRoutesFromElements(
         <>
@@ -18,6 +19,7 @@ const routers = createBrowserRouter(
                 <Route  index path="/dashboard" element={<Dashboard/>} />
                 <Route path="record" element={<Record/>} />
                 <Route path="logout" element={<Logout />}/>
+                <Route path="attendance-setting" element={<AttendanceSetting/>} />
                 <Route  path="*" element={<Navigate to="/dashboard" replace />} />
             </Route> 
         </>

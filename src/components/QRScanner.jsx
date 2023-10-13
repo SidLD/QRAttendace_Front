@@ -36,10 +36,10 @@ export const QRScanner = () => {
         scanner.render(success, error)
     }, [])
   return (
-    <div className='w-full flex justify-center items-center flex-col'>
+    <div className='w-full h-full flex justify-center items-center flex-col'>
         {contextHolder}
         <h2>Scan</h2>
-        <div className='w-1/3' id='reader'>
+        <div className='h-full lg:w-1/3 sm:w-2/5 w-3/4' id='reader'>
         </div>
     </div>
   )

@@ -9,17 +9,17 @@ export const DashboardView = () => {
 
     if(user.role === "admin"){
       return (
-        <div>
+        <div className="w-full">
             <QRScanner />
         </div>
       )
     }
 
   return (
-    <div className="w-full flex justify-center items-center flex-col">
-        <div className="h-[200px] flex justify-center items-center">
-            <QRCodeView />    
-        </div>   
+    <div className=" w-full flex justify-center items-center flex-col">
+        <div className="w-[50px] h-[200px] flex justify-center items-center">
+            <QRCodeView />
+        </div>
         <Button>Generate Code</Button>
     </div>
   )

@@ -1,17 +1,25 @@
 import {Content, Header} from 'antd/es/layout/layout'
-import {Layout, Menu} from 'antd'
+import {Button, Layout, Menu, Tooltip} from 'antd'
 import {Outlet, useNavigate} from 'react-router-dom'
 import { auth } from '../lib/services'
 import {
   DashboardOutlined,
   TeamOutlined,
-  // SettingOutlined,
-  LogoutOutlined
+  LogoutOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
+import { useState } from 'react';
+import Sider from 'antd/es/layout/Sider';
 
 export const DashboardLayout = () => {
   const navigate = useNavigate();
   const user = auth.getUserInfo();
+  const [collapsed, setCollapsed] = useState(false);
+  const toggleCollapsed = () => {
+    setCollapsed(!collapsed);
+  };
 
   const items = [
     {
@@ -24,35 +32,47 @@ export const DashboardLayout = () => {
       label: "Record",
       icon: <TeamOutlined />,
     },
-    // {
-    //   key: "setting",
-    //   label: "Setting",
-    //   icon: <SettingOutlined />,
-    // },
     {
-      key: "logout",
-      icon: <LogoutOutlined />,
-      label: "Logout",
+      key: "attendance-setting",
+      label: "Attendance Setting",
+      icon: <SettingOutlined />,
     },
   ];
 
   return (
     <Layout className='h-screen w-screen'>
         <Layout className='relative'>
-            <Header className=' flex justify-between items-center text-black bg-white dark:bg-slate-800'>
-              <h1 className='w-1/2 dark:shadow-md dark:shadow-blue-500 px-2 rounded-lg block dark:text-white uppercase text-sm mr-2 bold sm:text-xl '>
-                {user.role}
-              </h1>
-              <Menu 
-                className='w-1/2 flex justify-end'
-                onClick={({key}) => {
-                    navigate(key)
-                  }}
-                items={items} 
-                mode='horizontal'
-              />
-            </Header>
-            <Content className='overflow-x-hidden m-0 p-0 bg-slate-200 dark:bg-slate-950 '>
+            <Sider collapsed={collapsed}>
+              <Menu
+                  onClick={(e) => navigate(e.key)}
+                  mode="inline"
+                  theme="dark"
+                  items={items}
+                />
+            </Sider>
+              
+            <Content className='overflow-x-hidden m-0 p-0 bg-slate-200 '>
+                <Header>
+                  <Button
+                    type="primary"
+                    onClick={toggleCollapsed}
+                    style={{
+                      marginBottom: 16,
+                    }}
+                  >
+                    {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                  </Button>
+                  <div className='float-right flex flex-row justify-center items-center gap-4'>
+                    <h1 className='uppercase text-slate-50'>
+                      {user.role} MODE
+                    </h1>
+                    <Tooltip color='blue' title="Logout">
+                      <Button className='text-slate-50 flex justify-center items-center border-none hover:scale-110' onClick={() => navigate("/logout")}>
+                        <LogoutOutlined />
+                      </Button>
+                    </Tooltip>
+                  </div>
+                </Header>
               <Outlet/>
             </Content>
         </Layout>
