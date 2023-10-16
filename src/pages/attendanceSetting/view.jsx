@@ -1,12 +1,51 @@
-import { Button, Checkbox, Form, message } from "antd"
+import { Button, Checkbox, Form, Input, Modal, message } from "antd"
 import { useContext, useState } from "react";
 import { TimePicker } from 'antd';
-import dayjs from 'dayjs';
 import { PageContext } from "../../lib/context";
+import { CustomeTable } from "../../components/CustomeTable";
 
 export const AttendanceViews = () => {
-    const {submitCreateAttendaceData} = useContext(PageContext)
+    const {submitCreateAttendaceData, attendances, loader, selectAttendance, setSelectAttendance, handleDeleteAttendance} = useContext(PageContext)
     const [days, setDays] = useState([])
+    const [modal, setModal] = useState(false);
+
+    const columns = [
+      {
+        title: 'Title',
+        index: 'title',
+        isShow: true,
+      },
+      {
+        title: 'Clock In',
+        index: 'clockIn',
+        isShow: true,
+      },
+      {
+        title: 'Clock In Cut Off',
+        index: 'clockInCutOff',
+        isShow: true,
+      },
+      {
+        title: 'Clock Out',
+        index: 'clockOut',
+        isShow: true,
+      },
+      {
+        title: 'Clock Out Cut Off',
+        index: 'clockInCutOff',
+        isShow: true,
+      },
+      {
+        title: 'Days In a Week',
+        index: 'daysInWeek',
+        isShow: true,
+      },
+      {
+        title: 'Action',
+        index: 'action',
+        isShow: true,
+      },
+    ]
     const options = [
         {
           label: 'Monday',
@@ -33,6 +72,7 @@ export const AttendanceViews = () => {
           value: 'sat',
         },
     ];
+    
     const [messageAPI, contextHolder] = message.useMessage();
 
     const popUpBox = (type, content) => {
@@ -49,13 +89,15 @@ export const AttendanceViews = () => {
     const submitCreateAttendance = async(e) => {
         if(days.length > 0 && days){
            const result = await submitCreateAttendaceData({
-                dayInWeek: days,
+                title: e.title,
+                daysInAWeek: days,
                 clockIn: e.clockIn[0],
                 clockInCutOff: e.clockIn[1],
                 clockOut: e.clockIn[0],
                 clockOutCutOff: e.clockIn[1],
             })
             if(result){
+                setModal(false)
                 popUpBox('success', 'Attendance Updated')
             }else{
                 popUpBox('warning', 'Update Failed')
@@ -63,40 +105,109 @@ export const AttendanceViews = () => {
         }else{
             popUpBox('warning', 'Please select days')
         }
-        
     }
+
+    const submitDeleteAttendance = async () => {
+     if(await handleDeleteAttendance()){
+      popUpBox('success', "SUCCESS")
+     }else{
+      popUpBox('warning', "FAIL")
+     }
+    }
+
   return (
     <div className="mx-5 my-2">
         {contextHolder}
+        <Modal open={modal} onCancel={() => setModal(false)} footer={false}>
         <Form
             onFinish={submitCreateAttendance}
         >
-            <Form.Item label="Day in Week" 
-                rules={[{ required: true, message: 'Please input your days in week' }]}
+            <Form.Item label="Title"  name="title"
+                rules={[{ required: true, message: 'Please input Title' }]}
             >
-            <Checkbox.Group
-                options={options}
-                defaultValue={['Apple']}
-                onChange={onChange}
-            />
+              <Input />
             </Form.Item>
-            <Form.Item name='clockIn' label="Clock In & Cut Off"
-                rules={[{ required: true, message: 'Please input your days in week' }]}
+              <Form.Item label="Day in Week" 
+                  rules={[{ required: true, message: 'Please input your days in week' }]}
+              >
+              <Checkbox.Group
+                  options={options}
+                  defaultValue={['Apple']}
+                  onChange={onChange}
+              />
+              </Form.Item>
+              <Form.Item name='clockIn' label="Clock In & Cut Off"
+                  rules={[{ required: true, message: 'Please input your days in week' }]}
+              >
+                  <TimePicker.RangePicker showTime={{ format: 'hh:mm A', use12Hours:true }}/>
+              </Form.Item>
+              <Form.Item name='clockOut' label="Clock Out & Cut Off"
+                  rules={[{ required: true, message: 'Please input your days in week' }]}
+              >
+                  <TimePicker.RangePicker showTime={{ format: 'hh:mm A', use12Hours:true }}/>
+              </Form.Item>
+              <Form.Item>
+                  <Button htmlType="submit">
+                      Create Attendance
+                  </Button>
+              </Form.Item>
+          </Form>
+        </Modal>
+        <Button className="float-right" onClick={() => setModal(true)}>
+          Create New Attendance
+        </Button>
+        {!loader && <CustomeTable dataSource={attendances} column={columns} />}
+        <Modal open={!!selectAttendance && selectAttendance.type === 'EDIT'} onCancel={() => setSelectAttendance(null)}>
+            <div>
+            <Form
+              onFinish={submitCreateAttendance}
             >
-                <TimePicker.RangePicker defaultOpenValue={dayjs('00:00:00', 'HH:mm:ss')}/>
-            </Form.Item>
-            <Form.Item name='clockOut' label="Clock Out & Cut Off"
-                rules={[{ required: true, message: 'Please input your days in week' }]}
+            <Form.Item label="Title"  name="title"
+                rules={[{ required: true, message: 'Please input Title' }]}
             >
-                <TimePicker.RangePicker defaultOpenValue={dayjs('00:00:00', 'HH:mm:ss')}/>
+              <Input/>
             </Form.Item>
-            <Form.Item>
-                <Button htmlType="submit">
-                    Update
-                </Button>
-            </Form.Item>
-        </Form>
-        
+              <Form.Item label="Day in Week" 
+                  rules={[{ required: true, message: 'Please input your days in week' }]}
+              >
+              <Checkbox.Group
+                  options={options}
+                  defaultValue={['Apple']}
+                  onChange={onChange}
+              />
+              </Form.Item>
+              <Form.Item name='clockIn' label="Clock In & Cut Off"
+                  rules={[{ required: true, message: 'Please input your days in week' }]}
+              >
+                  <TimePicker.RangePicker showTime={{ format: 'hh:mm A', use12Hours:true }}/>
+              </Form.Item>
+              <Form.Item name='clockOut' label="Clock Out & Cut Off"
+                  rules={[{ required: true, message: 'Please input your days in week' }]}
+              >
+                  <TimePicker.RangePicker showTime={{ format: 'hh:mm A', use12Hours:true }}/>
+              </Form.Item>
+              <Form.Item>
+                  <Button htmlType="submit">
+                      Update Attendance
+                  </Button>
+              </Form.Item>
+          </Form>
+            </div>
+        </Modal>
+        <Modal open={!!selectAttendance && selectAttendance.type === 'DELETE'} onCancel={() => setSelectAttendance(null)} footer={false}>
+            <div>
+            <Form
+              onFinish={submitDeleteAttendance}
+            >
+              <p>Confirm Delete {selectAttendance?.data.title}?</p>
+              <Form.Item>
+                  <Button className="float-right bg-reed-500" htmlType="submit">
+                      Confirm
+                  </Button>
+              </Form.Item>
+          </Form>
+            </div>
+        </Modal>
     </div>
   )
 }

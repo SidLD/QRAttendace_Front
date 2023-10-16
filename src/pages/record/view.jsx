@@ -1,12 +1,19 @@
 import { Button, DatePicker } from "antd"
 import { CustomeTable } from "../../components/CustomeTable"
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { PageContext } from "../../lib/context";
 
 export const RecordView = () => {
+  const { changeDate, attendanceRecord} = useContext(PageContext)
   const [date, setDate] = useState(null)
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(10) 
   const columns = [
+    {
+      title: 'Attendance',
+      index: 'attendance',
+      isShow: true,
+    },
     {
       title: 'Username',
       index: 'username',
@@ -24,8 +31,8 @@ export const RecordView = () => {
     }
   ]
 
-  const onChange = (date, dateString) => {
-    console.log(date, dateString);
+  const onChange = async  (date, dateString) => {
+    await changeDate({date, dateString})
     setDate(dateString)
   };
 
@@ -56,7 +63,7 @@ export const RecordView = () => {
     <DatePicker onChange={onChange} />
     <h2>Selected Date {date}</h2>
   </div>
-  <CustomeTable dataSource={users} column={columns} />
+  <CustomeTable dataSource={attendanceRecord} column={columns} />
   <div className='flex w-full justify-end h-11 my-5'>
           <div className='rounded-full p-[1px] border-green-500 border-[1px]'>
             <Button className='h-10 border-none bg-green-500 rounded-full text-white' onClick={onPrevPage} >{`<`}</Button>

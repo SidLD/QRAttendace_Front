@@ -17,7 +17,7 @@ export const Login = () => {
 
       const result = await login(payload)
       const {token} = result.data
-      auth.storeToken(token)
+      auth.storeToken(`Bearer ${token}`)
       return true
     } catch (error) {
       console.log(error)
