@@ -26,16 +26,19 @@ export const DashboardLayout = () => {
       key: "dashboard",
       label: "Dashboard",
       icon: <DashboardOutlined />,
+      accounttypes: ['admin', 'user']
     },
     {
       key: "record",
       label: "Record",
       icon: <TeamOutlined />,
+      accounttypes: ['admin', 'user']
     },
     {
       key: "attendance-setting",
       label: "Attendance Setting",
       icon: <SettingOutlined />,
+      accounttypes: ['admin']
     },
   ];
 
@@ -47,7 +50,7 @@ export const DashboardLayout = () => {
                   onClick={(e) => navigate(e.key)}
                   mode="inline"
                   theme="dark"
-                  items={items}
+                  items={items.filter(item => item.accounttypes.includes(user.role))}
                 />
             </Sider>
               

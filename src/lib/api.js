@@ -101,6 +101,19 @@ export const deleteAttendance = (data) => {
       });
   });
 };
+export const updateAttendance = (attendanceId,data) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .put(`${import.meta.env.VITE_API_URL}/${import.meta.env.VITE_API_VERSION}/attendances/${attendanceId}`,
+        data, dataHeader())
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
 // END OF ATTENDANCE API
 
 

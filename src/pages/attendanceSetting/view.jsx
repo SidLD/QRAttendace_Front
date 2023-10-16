@@ -1,5 +1,5 @@
 import { Button, Checkbox, Form, Input, Modal, message } from "antd"
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { TimePicker } from 'antd';
 import { PageContext } from "../../lib/context";
 import { CustomeTable } from "../../components/CustomeTable";
@@ -32,7 +32,7 @@ export const AttendanceViews = () => {
       },
       {
         title: 'Clock Out Cut Off',
-        index: 'clockInCutOff',
+        index: 'clockOutCutOff',
         isShow: true,
       },
       {
@@ -93,8 +93,8 @@ export const AttendanceViews = () => {
                 daysInAWeek: days,
                 clockIn: e.clockIn[0],
                 clockInCutOff: e.clockIn[1],
-                clockOut: e.clockIn[0],
-                clockOutCutOff: e.clockIn[1],
+                clockOut: e.clockOut[0],
+                clockOutCutOff: e.clockOut[1],
             })
             if(result){
                 setModal(false)
@@ -114,6 +114,10 @@ export const AttendanceViews = () => {
       popUpBox('warning', "FAIL")
      }
     }
+
+    useEffect(() => {
+      setDays(selectAttendance?.data.daysInAWeek)
+    }, [selectAttendance])
 
   return (
     <div className="mx-5 my-2">
@@ -157,10 +161,12 @@ export const AttendanceViews = () => {
           Create New Attendance
         </Button>
         {!loader && <CustomeTable dataSource={attendances} column={columns} />}
-        <Modal open={!!selectAttendance && selectAttendance.type === 'EDIT'} onCancel={() => setSelectAttendance(null)}>
-            <div>
-            <Form
+        <Modal open={!!selectAttendance && selectAttendance.type === 'EDIT'} onCancel={() => setSelectAttendance(null)} footer={false}>
+            {!!selectAttendance && <Form
               onFinish={submitCreateAttendance}
+              initialValues={{
+                title: selectAttendance.data.title
+              }}
             >
             <Form.Item label="Title"  name="title"
                 rules={[{ required: true, message: 'Please input Title' }]}
@@ -172,7 +178,7 @@ export const AttendanceViews = () => {
               >
               <Checkbox.Group
                   options={options}
-                  defaultValue={['Apple']}
+                  defaultValue={selectAttendance.data.daysInAWeek}
                   onChange={onChange}
               />
               </Form.Item>
@@ -191,8 +197,7 @@ export const AttendanceViews = () => {
                       Update Attendance
                   </Button>
               </Form.Item>
-          </Form>
-            </div>
+          </Form>}
         </Modal>
         <Modal open={!!selectAttendance && selectAttendance.type === 'DELETE'} onCancel={() => setSelectAttendance(null)} footer={false}>
             <div>

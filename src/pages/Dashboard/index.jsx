@@ -107,7 +107,8 @@ export const Dashboard = () => {
   }
 
   useEffect(() => {
-    fetchAttendanceList()
+    if(user.role === "admin"){
+      fetchAttendanceList()
     const scanner = new Html5QrcodeScanner('reader', {
           qrbox: {
               width: 250,
@@ -125,11 +126,12 @@ export const Dashboard = () => {
                     userId: result
                   }
                   if(checkAttendance(selectAttendance.clockIn, selectAttendance.clockInCutOff)){
-                    const result = await createClockInRecord(payload)
+                    const result = await createClockInRecord({...payload, type: "clockIn"})
                     popUp('success', result.data.data )
                   }
                   else if(checkAttendance(selectAttendance.clockOut, selectAttendance.clockOutCutOff)){
-                    popUp('success', "Success Time Out" )
+                    const result = await createClockInRecord({...payload, type: "clockOut"})
+                    popUp('success', result.data.data )
                   }else{
                     popUp('warning', "Attendance is Currently Close" )
                   } 
@@ -142,6 +144,7 @@ export const Dashboard = () => {
         scanner.render(success, {})
       }
     scanner.render(success, {})
+    }
     setLoader(false)
   }, [selectAttendance])
   const values = {

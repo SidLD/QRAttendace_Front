@@ -1,6 +1,6 @@
 import { AttendanceViews } from "./view"
 import {PageContext} from "../../lib/context"
-import { createAttendance, deleteAttendance, getAllAttendance } from "../../lib/api"
+import { createAttendance, deleteAttendance, getAllAttendance, updateAttendance } from "../../lib/api"
 import { useEffect, useState } from "react"
 import { Button } from "antd"
 export const AttendanceSetting = () => {
@@ -10,8 +10,12 @@ export const AttendanceSetting = () => {
 
     const submitCreateAttendaceData = async (e) => {
         try {
-           await createAttendance(e)
-           await fetchAttendanceData()
+            if(selectAttendance.type === 'EDIT'){
+                await updateAttendance(selectAttendance.data._id,e)
+            }else{
+               await createAttendance(e)
+            }
+            await fetchAttendanceData()
             return true
         } catch (error) {
             console.log(error)

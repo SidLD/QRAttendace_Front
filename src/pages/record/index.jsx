@@ -5,6 +5,7 @@ import { getRecords } from "../../lib/api"
 
 export const Record = () => {
   const [attendanceRecord, setAttendanceRecord] = useState([])
+
   const formatAMPM = (date) => {
     let hours = date.getHours();
     let minutes = date.getMinutes();

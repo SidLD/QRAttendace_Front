@@ -54,8 +54,7 @@ export const DashboardView = () => {
     }
 
   return (
-    <div className=" w-full flex justify-center items-center flex-col">
-
+    <div className=" w-full h-full  flex justify-center items-center flex-col">
         <div className="w-[50px] h-[200px] flex justify-center items-center">
             <QRCodeView />
         </div>
